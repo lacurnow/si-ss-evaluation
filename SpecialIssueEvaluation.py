@@ -45,7 +45,7 @@ class SpecialIssueEvaluator:
         results_si_to_eid = {}
 
         reader_long_df = pd.read_csv(file_path, encoding='utf-8').rename(columns={'SPECIAL_ISSUE_ID': "SI_ID"})
-        reader_short_df = reader_long_df.groupby('SI_ID')['EID'].apply(list).reset_index(name='EID_list')
+        reader_short_df = reader_long_df.groupby(['SI_ID', 'QUERY_ID'])['EID'].apply(list).reset_index(name='EID_list')
 
         for index, row in reader_short_df.iterrows():
             results_si_to_eid[row["SI_ID"]] = row["EID_list"]
