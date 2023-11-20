@@ -37,7 +37,8 @@ class SpecialIssueEvaluator:
         with open(file_path, "r",  newline='', encoding='utf-8-sig') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                results_si_to_eid[row["SI_ID"]] = row["EID_list"]
+                # JG - restrict source fo truth to 5k max, because that is how much we are returning for the solutions
+                results_si_to_eid[row["SI_ID"]] = row["EID_list"][0:4999]
 
         return results_si_to_eid
 
