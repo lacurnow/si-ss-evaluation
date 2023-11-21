@@ -13,11 +13,14 @@ class App:
         # Parse eid data from files
         special_issue_dict = \
             self.specialIssueEvaluator.get_data_from_results(source_of_truth_files)
-        bool_results_dict = self.specialIssueEvaluator.get_data_from_results(bool_result_eids_file)
-        vector_results_dict = self.specialIssueEvaluator.get_data_from_results(vector_result_eids_file)
+
+        bool_results_dict = self.specialIssueEvaluator.get_data_from_long_results(bool_result_eids_file)
+        vector_results_dict = self.specialIssueEvaluator.get_data_from_long_results(vector_result_eids_file)
+
+        # bool_results_dict = self.specialIssueEvaluator.get_data_from_results(bool_result_eids_file)
+        # vector_results_dict = self.specialIssueEvaluator.get_data_from_results(vector_result_eids_file)
 
         # For each key in special issue dict, we want to compute similarity of eids
-
         fieldnames = ["SI_ID", "boolean_recall", "vector_recall", "boolean_similarity_score",
                       "vector_similarity_score", "boolean_jaccard_similarity_score", "vector_jaccard_similarity_score"]
 
@@ -58,9 +61,9 @@ class App:
 ######################################################################################
 
 if __name__ == "__main__":
-    source_of_truth_files = "/Users/curnowl/Downloads/sot_eval_SIs_short_eid_list.csv"
-    bool_result_file = "/Users/curnowl/Downloads/sot_eval_SIs_short_eid_list.csv"
-    vector_result_file = "/Users/curnowl/Downloads/sot_eval_SIs_short_eid_list.csv"
+    source_of_truth_files = "sot_eval_SIs_short_eid_list.csv"
+    bool_result_file = "sot_eval_SIs_short_eid_list.csv"
+    vector_result_file = "eval_tester_placeholder_vector_boolean.csv"
 
     App().start(source_of_truth_files, bool_result_file, vector_result_file)
 

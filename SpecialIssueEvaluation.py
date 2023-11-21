@@ -1,3 +1,4 @@
+import ast
 import csv
 import os
 import difflib
@@ -37,9 +38,25 @@ class SpecialIssueEvaluator:
         with open(file_path, "r",  newline='', encoding='utf-8-sig') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                results_si_to_eid[row["SI_ID"]] = row["EID_list"]
+                # Convert the string representation of a list to an actual list
+                eid_list = ast.literal_eval(row["EID_list"])
+
+                # JG - restrict source fo truth to 5k max, because that is how much we are returning for the solutions
+                results_si_to_eid[row["SI_ID"]] = eid_list[0:4999]
 
         return results_si_to_eid
+
+    # support for long format datasets (EID per row)
+    def get_data_from_long_results(self, file_path):
+        results_si_to_eid = {}
+
+        reader_long_df = pd.read_csv(file_path, encoding='utf-8').rename(columns={'SPECIAL_ISSUE_ID': "SI_ID"})
+        reader_short_df = reader_long_df.groupby('SI_ID')['EID'].apply(list).reset_index(name='EID_list')
+
+        for index, row in reader_short_df.iterrows():
+            results_si_to_eid[row["SI_ID"]] = row["EID_list"]
+        return results_si_to_eid
+
 
     def _get_column_data(self, csv_file, column_name):
         data = []
@@ -86,7 +103,7 @@ class SpecialIssueEvaluator:
 
         stats_df.index.names = ["similarity_metric"]
 
-        stats_df.to_csv(f"metrics_{datetime}")
+        stats_df.to_csv(f"metrics_{datetime}.csv")
 
 
 ######################################################################################
@@ -97,7 +114,7 @@ if __name__ == "__main__":
     datetime = datetime.now().isoformat()
 
     file = "/Users/curnowl/Documents/test.csv"
-    results_file = "/Users/curnowl/Developer/scopus-search-evaluaton/similarity_results_2023-11-20T16:27:05.593804.csv"
+    results_file = "similarity_results_2023-11-20T16:27:05.593804.csv"
 
     evaluator = SpecialIssueEvaluator()
     evaluator.calculate_similarity_metrics(results_file, datetime)
