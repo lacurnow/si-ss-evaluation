@@ -46,6 +46,7 @@ class SpecialIssueEvaluator:
 
         return results_si_to_eid
 
+    # support for long format datasets (EID per row)
     def get_data_from_long_results(self, file_path):
         results_si_to_eid = {}
 
