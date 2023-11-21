@@ -21,7 +21,6 @@ class App:
         # vector_results_dict = self.specialIssueEvaluator.get_data_from_results(vector_result_eids_file)
 
         # For each key in special issue dict, we want to compute similarity of eids
-
         fieldnames = ["SI_ID", "boolean_recall", "vector_recall", "boolean_similarity_score",
                       "vector_similarity_score", "boolean_jaccard_similarity_score", "vector_jaccard_similarity_score"]
 
@@ -64,7 +63,7 @@ class App:
 if __name__ == "__main__":
     source_of_truth_files = "sot_eval_SIs_short_eid_list.csv"
     bool_result_file = "sot_eval_SIs_short_eid_list.csv"
-    vector_result_file = "sot_eval_SIs_short_eid_list.csv"
+    vector_result_file = "eval_tester_placeholder_vector_boolean.csv"
 
     App().start(source_of_truth_files, bool_result_file, vector_result_file)
 
