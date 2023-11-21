@@ -3,6 +3,8 @@ import csv
 import os
 import difflib
 import sys
+
+import numpy as np
 import pandas as pd
 from datetime import datetime
 
@@ -42,7 +44,7 @@ class SpecialIssueEvaluator:
                 eid_list = ast.literal_eval(row["EID_list"])
 
                 # JG - restrict source fo truth to 5k max, because that is how much we are returning for the solutions
-                results_si_to_eid[row["SI_ID"]] = eid_list[0:4999]
+                results_si_to_eid[row["SI_ID"]] = eid_list
 
         return results_si_to_eid
 
@@ -72,27 +74,36 @@ class SpecialIssueEvaluator:
         return data
 
     def compute_recall(self, gt, pred):
-        gt_set = set(gt)
-        pred_set = set(pred)
-        intersection = gt_set.intersection(pred_set)
-        recall = len(intersection) / float(len(gt_set))
-
-        return recall
+        try:
+            gt_set = set(gt)
+            pred_set = set(pred)
+            intersection = gt_set.intersection(pred_set)
+            recall = len(intersection) / float(len(gt_set))
+            return recall
+        except TypeError as e:
+            return np.nan
 
     def compute_similarity(self, list1, list2):
-        similarities = difflib.SequenceMatcher(None, list1, list2)
-        ratio = similarities.ratio()
-        return ratio
+        try:
+            similarities = difflib.SequenceMatcher(None, list1, list2)
+            ratio = similarities.ratio()
+            return ratio
+        except TypeError as e:
+            return np.nan
+
 
     def jaccard_similarity(self, list1, list2):
-        intersection = len(set(list1) & set(list2))
-        union = len(set(list1) | set(list2))
+        try:
+            intersection = len(set(list1) & set(list2))
+            union = len(set(list1) | set(list2))
 
-        similarity = intersection / union
-        return similarity
+            similarity = intersection / union
+            return similarity
+        except TypeError as e:
+            return np.nan
 
     def calculate_similarity_metrics(self, similarity_results_file: str, datetime: str):
-        df = pd.read_csv(similarity_results_file)
+        df = pd.read_csv(similarity_results_file).dropna()
         del df['SI_ID']
 
         mean_scores = df.mean()

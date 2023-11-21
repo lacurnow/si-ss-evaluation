@@ -34,24 +34,28 @@ class App:
                 bool_result_eids = bool_results_dict.get(special_issue_id)
                 vector_result_eids = vector_results_dict.get(special_issue_id)
 
-                bool_recall = self.specialIssueEvaluator.compute_recall(special_issue_eids, bool_result_eids)
-                vector_recall = self.specialIssueEvaluator.compute_recall(special_issue_eids, vector_result_eids)
+                try:
+                    bool_recall = self.specialIssueEvaluator.compute_recall(special_issue_eids[0:5000], bool_result_eids[0:5000])
+                    vector_recall = self.specialIssueEvaluator.compute_recall(special_issue_eids[0:500], vector_result_eids[0:500])
 
-                bool_sim = self.specialIssueEvaluator.compute_similarity(special_issue_eids, bool_result_eids)
-                vector_sim = self.specialIssueEvaluator.compute_similarity(special_issue_eids, vector_result_eids)
+                    bool_sim = self.specialIssueEvaluator.compute_similarity(special_issue_eids[0:5000], bool_result_eids[0:5000])
+                    vector_sim = self.specialIssueEvaluator.compute_similarity(special_issue_eids[0:500], vector_result_eids[0:500])
 
-                bool_jaccard = self.specialIssueEvaluator.jaccard_similarity(special_issue_eids, bool_result_eids)
-                vector_jaccard = self.specialIssueEvaluator.jaccard_similarity(special_issue_eids, vector_result_eids)
+                    bool_jaccard = self.specialIssueEvaluator.jaccard_similarity(special_issue_eids[0:5000], bool_result_eids[0:5000])
+                    vector_jaccard = self.specialIssueEvaluator.jaccard_similarity(special_issue_eids[0:500], vector_result_eids[0:500])
 
-                sim_data["SI_ID"] = special_issue_id
-                sim_data["boolean_recall"] = bool_recall
-                sim_data["vector_recall"] = vector_recall
-                sim_data["boolean_similarity_score"] = bool_sim
-                sim_data["vector_similarity_score"] = vector_sim
-                sim_data["boolean_jaccard_similarity_score"] = bool_jaccard
-                sim_data["vector_jaccard_similarity_score"] = vector_jaccard
+                    sim_data["SI_ID"] = special_issue_id
+                    sim_data["boolean_recall"] = bool_recall
+                    sim_data["vector_recall"] = vector_recall
+                    sim_data["boolean_similarity_score"] = bool_sim
+                    sim_data["vector_similarity_score"] = vector_sim
+                    sim_data["boolean_jaccard_similarity_score"] = bool_jaccard
+                    sim_data["vector_jaccard_similarity_score"] = vector_jaccard
+                    writer.writerow(sim_data)
+                except TypeError as e:
+                    # skip the none rows
+                    pass
 
-                writer.writerow(sim_data)
 
         self.specialIssueEvaluator.calculate_similarity_metrics(f"similarity_results_{dt_string}.csv", dt_string)
 
@@ -62,8 +66,8 @@ class App:
 
 if __name__ == "__main__":
     source_of_truth_files = "sot_eval_SIs_short_eid_list.csv"
-    bool_result_file = "sot_eval_SIs_short_eid_list.csv"
-    vector_result_file = "eval_tester_placeholder_vector_boolean.csv"
+    bool_result_file = "boolean_results.csv"
+    vector_result_file = "vector_results.csv"
 
     App().start(source_of_truth_files, bool_result_file, vector_result_file)
 
